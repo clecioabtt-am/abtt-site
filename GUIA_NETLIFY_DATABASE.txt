@@ -1,0 +1,34 @@
+GUIA RÁPIDO — ABTT COM NETLIFY DATABASE + FUNCTIONS
+
+1) Envie este projeto ZIP para o Netlify normalmente.
+
+2) O projeto já vai com:
+   - netlify.toml
+   - package.json
+   - netlify/functions/content.js
+   - integração do site com /.netlify/functions/content
+
+3) Depois do deploy terminar, abra este endereço no navegador:
+   https://SEU-SITE.netlify.app/.netlify/functions/content
+
+4) Se estiver correto, deve aparecer um JSON parecido com:
+   {"ok":true,"data":{"athletes":[...],"news":[...],"events":[...],"media":[...]}}
+
+5) A partir disso, tudo que for salvo no Admin será gravado no Netlify Blobs,
+   que funciona como banco online simples da Netlify.
+
+6) Login do administrador:
+   usuário: klinger
+   senha: klingergestor
+
+7) Observação importante:
+   este modelo salva imagens/vídeos como Base64 dentro do banco.
+   Para arquivos muito grandes, use imagens otimizadas e vídeos curtos.
+   Para muitos vídeos pesados, o ideal é hospedar os vídeos no YouTube/Vimeo
+   ou migrar depois para Supabase Storage.
+
+8) Teste correto:
+   - publique uma notícia no navegador 1
+   - abra o site em outro navegador/celular
+   - atualize a página
+   - o conteúdo deve aparecer igual para todos
