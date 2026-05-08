@@ -153,12 +153,12 @@ function renderPublic() {
 
   const news = document.getElementById('newsGrid');
   if (news) {
-    news.innerHTML = data.news.map(n => `<article class="post-card reveal active">${n.image ? `<img src="${esc(n.image)}" alt="${esc(n.title)}">` : ''}<div><h3>${esc(n.title)}</h3><p>${esc(n.text)}</p></div></article>`).join('') || '<p class="empty">Nenhuma notícia cadastrada.</p>';
+    news.innerHTML = data.news.map(n => `<article class="post-card reveal active">${n.image ? `<div class="image-fit-frame" style="--bg:url('${esc(n.image)}')"><img src="${esc(n.image)}" alt="${esc(n.title)}"></div>` : ''}<div><h3>${esc(n.title)}</h3><p>${esc(n.text)}</p></div></article>`).join('') || '<p class="empty">Nenhuma notícia cadastrada.</p>';
   }
 
   const events = document.getElementById('eventsGrid');
   if (events) {
-    events.innerHTML = data.events.map(ev => `<article class="post-card event-card reveal active"><img src="${esc(ev.image)}" alt="${esc(ev.title)}"><div><span>${formatDate(ev.date)}</span><h3>${esc(ev.title)}</h3></div></article>`).join('') || '<p class="empty">Nenhum evento cadastrado.</p>';
+    events.innerHTML = data.events.map(ev => `<article class="post-card event-card reveal active"><div class="image-fit-frame" style="--bg:url('${esc(ev.image)}')"><img src="${esc(ev.image)}" alt="${esc(ev.title)}"></div><div><span>${formatDate(ev.date)}</span><h3>${esc(ev.title)}</h3></div></article>`).join('') || '<p class="empty">Nenhum evento cadastrado.</p>';
   }
 
   const affiliates = document.getElementById('affiliatesGrid');
