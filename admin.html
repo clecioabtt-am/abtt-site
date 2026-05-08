@@ -18,7 +18,7 @@
     </section>
 
     <section id="panelBox" class="admin-panel hidden">
-      <div class="admin-top"><div><p class="eyebrow">Gestão de conteúdo</p><h1>Administrador ABTT</h1><p>Cadastre, edite e remova atletas, notícias, eventos, imagens e vídeos.</p><div id="dbStatus" class="db-status offline">Verificando banco online...</div></div><div class="admin-actions"><a class="btn btn-ghost" href="index.html">Ver site</a><button class="btn" id="logoutBtn">Sair</button></div></div>
+      <div class="admin-top"><div><p class="eyebrow">Gestão de conteúdo</p><h1>Administrador ABTT</h1><p>Cadastre, edite e remova atletas, notícias, eventos, afiliadas, imagens e vídeos.</p><div id="dbStatus" class="db-status offline">Verificando banco online...</div></div><div class="admin-actions"><a class="btn btn-ghost" href="index.html">Ver site</a><button class="btn" id="logoutBtn">Sair</button></div></div>
       <div class="admin-grid">
         <form class="admin-card" id="athleteForm" data-edit-index=""><h2>Atletas</h2>
           <input name="name" placeholder="Nome do atleta" required>
@@ -31,9 +31,18 @@
           <label>Foto do atleta<input name="photo" type="file" accept="image/*"></label>
           <button class="btn" type="submit">Salvar atleta</button><button class="btn btn-ghost form-cancel" type="button" data-form="athleteForm">Cancelar edição</button>
         </form>
-        <form class="admin-card" id="newsForm" data-edit-index=""><h2>Notícias</h2><input name="title" placeholder="Título da notícia" required><textarea name="text" placeholder="Texto da notícia" required></textarea><label>Imagem opcional<input name="image" type="file" accept="image/*"></label><button class="btn" type="submit">Salvar notícia</button><button class="btn btn-ghost form-cancel" type="button" data-form="newsForm">Cancelar edição</button></form>
-        <form class="admin-card" id="eventForm" data-edit-index=""><h2>Eventos</h2><input name="title" placeholder="Nome do evento" required><input name="date" type="date" required><label>Imagem do card<input name="image" type="file" accept="image/*"></label><button class="btn" type="submit">Salvar evento</button><button class="btn btn-ghost form-cancel" type="button" data-form="eventForm">Cancelar edição</button></form>
-        <form class="admin-card" id="mediaForm" data-edit-index=""><h2>Upload de mídia</h2><select name="type"><option value="image">Imagem</option><option value="video">Vídeo</option></select><input name="title" placeholder="Título da mídia" required><label>Arquivo<input name="file" type="file" accept="image/*,video/*"></label><button class="btn" type="submit">Salvar mídia</button><button class="btn btn-ghost form-cancel" type="button" data-form="mediaForm">Cancelar edição</button></form>
+        <form class="admin-card" id="newsForm" data-edit-index=""><h2>Notícias</h2><input name="title" placeholder="Título da notícia" required><textarea name="text" placeholder="Texto da notícia" required></textarea><label>Imagem opcional<input name="image" type="file" accept="image/*"></label><p class="upload-tip">Dimensão recomendada para notícias: 1920 x 1080 px, formato horizontal JPG/PNG. O site exibirá a imagem inteira, sem cortes.</p><button class="btn" type="submit">Salvar notícia</button><button class="btn btn-ghost form-cancel" type="button" data-form="newsForm">Cancelar edição</button></form>
+        <form class="admin-card" id="eventForm" data-edit-index=""><h2>Eventos</h2><input name="title" placeholder="Nome do evento" required><input name="date" type="date" required><label>Imagem do card<input name="image" type="file" accept="image/*"></label><p class="upload-tip">Dimensão recomendada para eventos: 1920 x 1080 px, formato horizontal JPG/PNG. O site exibirá a imagem inteira, sem cortes.</p><button class="btn" type="submit">Salvar evento</button><button class="btn btn-ghost form-cancel" type="button" data-form="eventForm">Cancelar edição</button></form>
+        <form class="admin-card" id="mediaForm" data-edit-index=""><h2>Upload de mídia</h2><select name="type"><option value="image">Imagem</option><option value="video">Vídeo</option></select><input name="title" placeholder="Título da mídia" required><label>Arquivo<input name="file" type="file" accept="image/*,video/*"></label><p class="upload-tip">Para imagens da mídia: 1920 x 1080 px. Para vídeos: MP4 leve, até o limite informado pelo sistema.</p><button class="btn" type="submit">Salvar mídia</button><button class="btn btn-ghost form-cancel" type="button" data-form="mediaForm">Cancelar edição</button></form>
+        <form class="admin-card" id="affiliateForm" data-edit-index=""><h2>Afiliadas</h2>
+          <input name="name" placeholder="Nome da afiliada / academia" required>
+          <input name="country" placeholder="País. Ex: Catar, Brasil, Portugal" required>
+          <input name="city" placeholder="Cidade. Ex: Doha, Manaus" required>
+          <input name="coach" placeholder="Professor responsável (opcional)">
+          <label>Imagem da afiliada<input name="image" type="file" accept="image/*"></label>
+          <p class="upload-tip">Dimensão recomendada para afiliadas: 1200 x 800 px ou 1920 x 1080 px. A imagem aparecerá inteira, sem cortes.</p>
+          <button class="btn" type="submit">Salvar afiliada</button><button class="btn btn-ghost form-cancel" type="button" data-form="affiliateForm">Cancelar edição</button>
+        </form>
       </div>
       <section class="admin-list"><h2>Conteúdo cadastrado</h2><div id="adminList"></div><button class="btn danger" id="clearBtn">Limpar todos os conteúdos cadastrados</button></section>
     </section>

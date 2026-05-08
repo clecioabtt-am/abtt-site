@@ -1,0 +1,15 @@
+CORREÇÃO DE SINCRONIZAÇÃO ABTT
+
+1. Use apenas UM site oficial da Netlify.
+   Exemplo: https://comfy-valkyrie-f7e7c2.netlify.app
+   Se você cadastrar no site antigo e abrir outro domínio, os dados podem não aparecer porque cada projeto Netlify tem seu próprio Blobs.
+
+2. Depois do deploy, teste:
+   https://SEU-SITE.netlify.app/.netlify/functions/content
+
+3. Se o JSON mostrar o atleta/notícia/evento, o banco online está correto.
+
+4. Esta versão NÃO usa mais localStorage como fonte principal.
+   O conteúdo sempre é carregado da Function Netlify com cache desativado.
+
+5. Após enviar estes arquivos ao GitHub, faça commit. A Netlify fará o deploy automático.

@@ -15,6 +15,9 @@ const defaultData = {
   ],
   media: [
     { id: 'media-default', title: 'Identidade ABTT', type: 'image', src: 'assets/abtt-logo-premium.jpg' }
+  ],
+  affiliates: [
+    { id: 'affiliate-default', name: 'ABTT Matriz', country: 'Brasil', city: 'Manaus', coach: 'Equipe ABTT', image: 'assets/abtt-logo-premium.jpg' }
   ]
 };
 
@@ -32,7 +35,8 @@ function normalizeData(input) {
     athletes: Array.isArray(data.athletes) ? data.athletes : [],
     news: Array.isArray(data.news) ? data.news : [],
     events: Array.isArray(data.events) ? data.events : [],
-    media: Array.isArray(data.media) ? data.media : []
+    media: Array.isArray(data.media) ? data.media : [],
+    affiliates: Array.isArray(data.affiliates) ? data.affiliates : []
   };
 }
 

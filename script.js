@@ -7,7 +7,8 @@ const defaultData = {
   athletes: [{ id: 'athlete-default', name: 'Atleta ABTT', age: '28', belt: 'Preta', degree: '1º dan', country: '🇧🇷 Brasil', photo: 'assets/abtt-logo-premium.jpg' }],
   news: [{ id: 'news-default', title: 'Bem-vindo ao portal oficial da ABTT', text: 'Acompanhe aqui notícias, conquistas, treinos, graduações e atualizações da equipe.', image: 'assets/abtt-logo-premium.jpg' }],
   events: [{ id: 'event-default', title: 'Aulão ABTT', date: '2026-06-01', image: 'assets/abtt-logo-premium.jpg' }],
-  media: [{ id: 'media-default', title: 'Identidade ABTT', type: 'image', src: 'assets/abtt-logo-premium.jpg' }]
+  media: [{ id: 'media-default', title: 'Identidade ABTT', type: 'image', src: 'assets/abtt-logo-premium.jpg' }],
+  affiliates: [{ id: 'affiliate-default', name: 'ABTT Matriz', country: 'Brasil', city: 'Manaus', coach: 'Equipe ABTT', image: 'assets/abtt-logo-premium.jpg' }]
 };
 
 let appData = structuredCloneSafe(defaultData);
@@ -23,7 +24,8 @@ function normalizeData(input) {
     athletes: Array.isArray(data.athletes) ? data.athletes : [],
     news: Array.isArray(data.news) ? data.news : [],
     events: Array.isArray(data.events) ? data.events : [],
-    media: Array.isArray(data.media) ? data.media : []
+    media: Array.isArray(data.media) ? data.media : [],
+    affiliates: Array.isArray(data.affiliates) ? data.affiliates : []
   };
 }
 
@@ -38,17 +40,21 @@ function localBackupWrite(data) {
 
 async function loadData() {
   try {
-    const response = await fetch(`${API_URL}?t=${Date.now()}`, { cache: 'no-store' });
+    const response = await fetch(`${API_URL}?v=${Date.now()}`, {
+      cache: 'no-store',
+      headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
+    });
     if (!response.ok) throw new Error('Função Netlify indisponível');
     const payload = await response.json();
     if (!payload.ok) throw new Error(payload.error || 'Resposta inválida da função');
     appData = normalizeData(payload.data);
     databaseOnline = true;
-    localBackupWrite(appData);
   } catch (error) {
+    // IMPORTANTE: não usamos mais localStorage como fonte principal.
+    // localStorage causava exatamente o problema de cada navegador mostrar dados diferentes.
     databaseOnline = false;
-    appData = localBackupRead();
-    console.warn('ABTT: usando backup local porque o banco online não respondeu.', error);
+    appData = structuredCloneSafe(defaultData);
+    console.warn('ABTT: banco online não respondeu; exibindo dados padrão temporariamente.', error);
   }
   updateDbStatus();
   return appData;
@@ -56,12 +62,14 @@ async function loadData() {
 
 async function saveData(data) {
   const normalized = normalizeData(data);
-  appData = normalized;
-  localBackupWrite(normalized);
   try {
-    const response = await fetch(API_URL, {
+    const response = await fetch(`${API_URL}?v=${Date.now()}`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache'
+      },
       body: JSON.stringify({ data: normalized })
     });
     const payload = await response.json().catch(() => ({}));
@@ -151,6 +159,11 @@ function renderPublic() {
   const events = document.getElementById('eventsGrid');
   if (events) {
     events.innerHTML = data.events.map(ev => `<article class="post-card event-card reveal active"><img src="${esc(ev.image)}" alt="${esc(ev.title)}"><div><span>${formatDate(ev.date)}</span><h3>${esc(ev.title)}</h3></div></article>`).join('') || '<p class="empty">Nenhum evento cadastrado.</p>';
+  }
+
+  const affiliates = document.getElementById('affiliatesGrid');
+  if (affiliates) {
+    affiliates.innerHTML = data.affiliates.map(a => `<article class="affiliate-card reveal active">${a.image ? `<img src="${esc(a.image)}" alt="${esc(a.name)}">` : ''}<div><span>🌍 ${esc(a.country)}</span><h3>${esc(a.name)}</h3><p>${esc(a.city)}${a.coach ? ' • Prof. ' + esc(a.coach) : ''}</p></div></article>`).join('') || '<p class="empty">Nenhuma afiliada cadastrada.</p>';
   }
 
   const media = document.getElementById('mediaGrid');
@@ -276,6 +289,15 @@ handleForm('mediaForm', 'media', async (fd, old) => ({
   src: await fileToDataURL(fd.get('file')) || old?.src || ''
 }));
 
+handleForm('affiliateForm', 'affiliates', async (fd, old) => ({
+  id: old?.id || createId('affiliate'),
+  name: fd.get('name'),
+  country: fd.get('country'),
+  city: fd.get('city'),
+  coach: fd.get('coach'),
+  image: await fileToDataURL(fd.get('image')) || old?.image || 'assets/abtt-logo-premium.jpg'
+}));
+
 function editItem(type, index) {
   const data = normalizeData(appData);
   const item = data[type][index];
@@ -304,6 +326,13 @@ function editItem(type, index) {
     form.title.value = item.title || '';
     form.type.value = item.type || 'image';
   }
+  if (type === 'affiliates') {
+    form = document.getElementById('affiliateForm');
+    form.name.value = item.name || '';
+    form.country.value = item.country || '';
+    form.city.value = item.city || '';
+    form.coach.value = item.coach || '';
+  }
   if (form) {
     form.dataset.editIndex = String(index);
     form.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -329,6 +358,7 @@ function itemLabel(type, item) {
   if (type === 'athletes') return `${item.country || ''} ${item.name || ''} — Faixa ${item.belt || ''} ${item.degree || ''}`;
   if (type === 'news') return item.title;
   if (type === 'events') return `${item.title} — ${item.date}`;
+  if (type === 'affiliates') return `${item.name || ''} — ${item.city || ''}, ${item.country || ''}`;
   return `${item.title} — ${item.type === 'video' ? 'Vídeo' : 'Imagem'}`;
 }
 
@@ -336,14 +366,14 @@ function renderAdmin() {
   const box = document.getElementById('adminList');
   if (!box) return;
   const data = normalizeData(appData);
-  const groups = [['athletes', 'Atletas'], ['news', 'Notícias'], ['events', 'Eventos'], ['media', 'Mídias']];
+  const groups = [['athletes', 'Atletas'], ['news', 'Notícias'], ['events', 'Eventos'], ['affiliates', 'Afiliadas'], ['media', 'Mídias']];
   box.innerHTML = groups.map(([type, title]) => `<div class="admin-section-list"><h3>${title} <small>${data[type].length}</small></h3>${data[type].map((item, i) => `<div class="admin-row"><span>${esc(itemLabel(type, item))}</span><div><button class="mini-btn" onclick="editItem('${type}',${i})">Editar</button><button class="mini-btn danger-mini" onclick="deleteItem('${type}',${i})">Remover</button></div></div>`).join('') || '<p class="empty">Nada cadastrado.</p>'}</div>`).join('');
 }
 
 document.getElementById('clearBtn')?.addEventListener('click', async () => {
   if (!confirm('Tem certeza que deseja limpar todos os conteúdos cadastrados no banco online?')) return;
   try {
-    await saveData({ athletes: [], news: [], events: [], media: [] });
+    await saveData({ athletes: [], news: [], events: [], media: [], affiliates: [] });
     renderAdmin();
     renderPublic();
   } catch (error) {
@@ -351,8 +381,20 @@ document.getElementById('clearBtn')?.addEventListener('click', async () => {
   }
 });
 
-(async function init() {
+async function refreshFromOnline() {
   await loadData();
   renderPublic();
   if (sessionStorage.getItem('abtt_admin') === '1') renderAdmin();
+}
+
+(async function init() {
+  await refreshFromOnline();
 })();
+
+// Mantém todos os navegadores atualizados com o banco online.
+// Assim, publicações feitas por outro administrador aparecem sem depender do cache do navegador.
+setInterval(() => {
+  if (!document.hidden) refreshFromOnline();
+}, 15000);
+
+window.addEventListener('focus', refreshFromOnline);
