@@ -3,113 +3,187 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ABTT Equipe | Jiu-Jitsu • MMA • Luta-Livre</title>
-  <meta name="description" content="Site profissional premium da ABTT Equipe com área de atletas, notícias, eventos, mídia e contato via WhatsApp." />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css" />
+  <title>Portal de Transparência | DM Gestão Patrimonial</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-  <div class="texture"></div>
-  <div id="google_translate_element" class="translate-box"></div>
-  <header class="site-header" id="topo">
-    <nav class="nav container">
-      <a class="brand" href="#topo" aria-label="ABTT Equipe">
-        <img src="assets/abtt-logo-premium.jpg" alt="Logo ABTT Equipe" />
-        <span><strong>ABTT</strong><small>Jiu-Jitsu • MMA • Luta-Livre</small></span>
-      </a>
-      <button class="menu-btn" aria-label="Abrir menu">☰</button>
-      <div class="nav-links">
-        <a href="#modalidades">Modalidades</a>
-        <a href="#atletas">Atletas</a>
-        <a href="#noticias">Notícias</a>
-        <a href="#eventos">Eventos</a>
-        <a href="#afiliadas">Afiliadas</a>
-        <a href="#midia">Mídia</a>
-        <button class="translate-trigger" type="button">🌐 Traduzir</button>
-        <a href="admin.html" class="admin-link">Admin</a>
-        <a href="https://wa.me/5551996396927" target="_blank" rel="noopener" class="nav-cta">WhatsApp</a>
-      </div>
-    </nav>
-  </header>
-
-  <main>
-    <section class="hero">
-      <div class="ember ember-one"></div><div class="ember ember-two"></div>
-      <div class="container hero-grid">
-        <div class="hero-copy reveal">
-          <p class="eyebrow">Equipe premium de combate</p>
-          <h1><span>ABTT</span><span>Equipe</span></h1>
-          <p class="lead">Jiu-jitsu, luta livre e MMA com identidade forte, disciplina de tatame e presença visual conectada ao vermelho incandescente, preto profundo e prata metálico da marca.</p>
-          <div class="hero-actions">
-            <a href="https://wa.me/5551996396927" target="_blank" rel="noopener" class="btn">Chamar no WhatsApp</a>
-            <a href="#atletas" class="btn btn-ghost">Ver atletas</a>
-          </div>
-          <div class="signature-bar"><span>Disciplina</span><i></i><span>Respeito</span><i></i><span>Evolução</span></div>
+  <div id="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">DM</div>
+        <div>
+          <h1>Portal de Transparência</h1>
+          <p>DM Gestão Patrimonial</p>
         </div>
-        <aside class="logo-showcase reveal delay-1">
-          <div class="logo-frame"><img src="assets/abtt-logo-premium.jpg" alt="Logo ABTT" /></div>
-          <p>Metal • Fogo • Técnica • Honra</p>
-        </aside>
       </div>
-    </section>
-
-    <section id="modalidades" class="section container">
-      <div class="section-head reveal">
-        <p class="eyebrow">Centro de treinamento</p>
-        <h2>Modalidades de alto impacto</h2>
-        <p>Um site com acabamento premium para apresentar a equipe, atletas, eventos, notícias e mídia da ABTT.</p>
+      <div class="session-actions">
+        <span id="sessionLabel" class="session-label">Acesso seguro</span>
+        <button id="adminAccessBtn" class="btn btn-ghost">Área Administrativa</button>
+        <button id="logoutBtn" class="btn btn-ghost hidden">Sair</button>
       </div>
-      <div class="cards">
-        <article class="mod-card reveal"><span>01</span><h3>Brazilian Jiu-Jitsu</h3><p>Controle, guarda, passagem, defesa pessoal, finalizações e evolução técnica constante.</p></article>
-        <article class="mod-card reveal delay-1"><span>02</span><h3>Luta-Livre</h3><p>Quedas, pressão, domínio sem kimono, transições rápidas e finalizações eficientes.</p></article>
-        <article class="mod-card reveal delay-2"><span>03</span><h3>MMA</h3><p>Integração entre grappling, trocação, condicionamento físico e estratégia de luta.</p></article>
+    </header>
+
+    <main>
+      <section id="loginScreen" class="login-wrap">
+        <div class="login-card">
+          <span class="pill">Área do Morador</span>
+          <h2>Acesse sua prestação de contas</h2>
+          <p>Selecione seu condomínio e entre com seu e-mail e senha. Este acesso é exclusivo para moradores.</p>
+
+          <label>Condomínio</label>
+          <select id="loginCondominio"></select>
+
+          <label>E-mail</label>
+          <input id="loginEmail" type="email" placeholder="seuemail@exemplo.com" />
+
+          <label>Senha</label>
+          <input id="loginSenha" type="password" placeholder="Digite sua senha" />
+
+          <button id="loginBtn" class="btn btn-primary full">Entrar no portal</button>
+          <p id="loginMsg" class="message"></p>
+
+          <div class="admin-note">
+            <strong>Administrador:</strong> use o botão “Área Administrativa” no topo para acessar o painel de gestão.
+          </div>
+        </div>
+      </section>
+
+      <section id="dashboardScreen" class="hidden dashboard">
+        <div class="dashboard-head">
+          <div>
+            <span class="pill">Prestação de contas digital</span>
+            <h2 id="condominioTitulo">Condomínio</h2>
+            <p id="userRoleLabel">Visualização segura</p>
+          </div>
+          <div class="quick-actions">
+            <button id="printBtn" class="btn btn-light">Imprimir / PDF</button>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <article class="stat-card income">
+            <span>Receitas</span>
+            <strong id="totalReceitas">R$ 0,00</strong>
+          </article>
+          <article class="stat-card expense">
+            <span>Despesas</span>
+            <strong id="totalDespesas">R$ 0,00</strong>
+          </article>
+          <article class="stat-card balance">
+            <span>Saldo</span>
+            <strong id="saldoAtual">R$ 0,00</strong>
+          </article>
+          <article class="stat-card docs">
+            <span>Registros</span>
+            <strong id="totalRegistros">0</strong>
+          </article>
+        </div>
+
+        <div id="adminPanel" class="admin-panel hidden">
+          <div class="panel-title">
+            <h3>Painel Administrativo</h3>
+            <p>Cadastre condomínios, moradores, logins e lançamentos completos.</p>
+          </div>
+
+          <div class="admin-grid">
+            <form id="formCondominio" class="form-card">
+              <h4>Novo condomínio</h4>
+              <input id="condNome" placeholder="Nome do condomínio" required />
+              <input id="condEndereco" placeholder="Endereço / referência" />
+              <button class="btn btn-primary" type="submit">Cadastrar condomínio</button>
+            </form>
+
+            <form id="formMorador" class="form-card">
+              <h4>Cadastrar morador e criar login</h4>
+              <input id="moradorNome" placeholder="Nome do morador" required />
+              <input id="moradorEmail" type="email" placeholder="E-mail de acesso" required />
+              <input id="moradorSenha" type="text" placeholder="Senha inicial" required />
+              <input id="moradorUnidade" placeholder="Apartamento / unidade" />
+              <select id="moradorCondominio" required></select>
+              <button class="btn btn-primary" type="submit">Criar acesso do morador</button>
+              <p class="hint">Este cadastro usa uma função segura do Netlify para criar o login no Supabase Auth.</p>
+            </form>
+
+            <form id="formLancamento" class="form-card wide">
+              <h4>Novo lançamento / serviço</h4>
+              <div class="two">
+                <select id="lanCondominio" required></select>
+                <select id="lanTipo">
+                  <option value="receita">Receita</option>
+                  <option value="despesa">Despesa</option>
+                </select>
+              </div>
+              <div class="two">
+                <input id="lanData" type="date" required />
+                <input id="lanValor" type="number" step="0.01" placeholder="Valor" required />
+              </div>
+              <div class="two">
+                <input id="lanCategoria" placeholder="Categoria: Energia, Água, Manutenção..." />
+                <input id="lanLocal" placeholder="Local: Bloco A, garagem, cano..." />
+              </div>
+              <input id="lanDescricao" placeholder="Descrição resumida" required />
+              <textarea id="lanJustificativa" placeholder="Justificativa / motivo do pagamento ou serviço"></textarea>
+              <div class="two file-fields">
+                <label>Nota fiscal <input id="lanNota" type="file" accept="image/*,.pdf" /></label>
+                <label>Comprovante <input id="lanComprovante" type="file" accept="image/*,.pdf" /></label>
+              </div>
+              <div class="two file-fields">
+                <label>Foto antes <input id="lanFotoAntes" type="file" accept="image/*" /></label>
+                <label>Foto depois <input id="lanFotoDepois" type="file" accept="image/*" /></label>
+              </div>
+              <button class="btn btn-primary" type="submit">Salvar lançamento</button>
+            </form>
+          </div>
+          <p id="adminMsg" class="message"></p>
+        </div>
+
+        <section class="records-section">
+          <div class="section-row">
+            <h3>Lançamentos e serviços</h3>
+            <div class="filters">
+              <select id="filterTipo">
+                <option value="">Todos</option>
+                <option value="receita">Receitas</option>
+                <option value="despesa">Despesas</option>
+              </select>
+              <input id="filterBusca" placeholder="Buscar por descrição, categoria ou local" />
+            </div>
+          </div>
+
+          <div id="recordsList" class="records-list"></div>
+        </section>
+      </section>
+    </main>
+
+
+    <div id="adminLoginModal" class="modal hidden">
+      <div class="modal-card admin-login-card">
+        <button id="closeAdminLogin" class="modal-close">×</button>
+        <span class="pill">Área Administrativa</span>
+        <h2>Acesso do Administrador</h2>
+        <p>Entre com o e-mail e senha do administrador para gerenciar condomínios, moradores e lançamentos.</p>
+
+        <label>E-mail do administrador</label>
+        <input id="adminEmail" type="email" placeholder="admin@dm.com" />
+
+        <label>Senha</label>
+        <input id="adminSenha" type="password" placeholder="Digite a senha administrativa" />
+
+        <button id="adminLoginBtn" class="btn btn-primary full">Entrar como administrador</button>
+        <p id="adminLoginMsg" class="message"></p>
       </div>
-    </section>
+    </div>
 
-    <section id="atletas" class="section container">
-      <div class="section-head reveal"><p class="eyebrow">Equipe ABTT</p><h2>Atletas cadastrados</h2><p>Os atletas adicionados na área administrativa aparecem nesta vitrine com foto, idade, faixa e país.</p></div>
-      <div id="athletesGrid" class="athlete-grid"></div>
-    </section>
-
-    <section id="noticias" class="section alt-section">
-      <div class="container">
-        <div class="section-head reveal"><p class="eyebrow">Atualizações</p><h2>Notícias da equipe</h2><p>Comunicados, conquistas, graduações, resultados e novidades importantes.</p></div>
-        <div id="newsGrid" class="content-grid"></div>
+    <div id="detailModal" class="modal hidden">
+      <div class="modal-card">
+        <button id="closeModal" class="modal-close">×</button>
+        <div id="detailContent"></div>
       </div>
-    </section>
+    </div>
+  </div>
 
-    <section id="eventos" class="section container">
-      <div class="section-head reveal"><p class="eyebrow">Agenda</p><h2>Cards de eventos</h2><p>Divulgação de seminários, campeonatos, graduações, aulões e encontros oficiais.</p></div>
-      <div id="eventsGrid" class="content-grid"></div>
-    </section>
-
-    <section id="afiliadas" class="section alt-section">
-      <div class="container">
-        <div class="section-head reveal"><p class="eyebrow">Presença mundial</p><h2>Afiliadas ABTT</h2><p>Países e cidades onde a equipe ABTT possui afiliadas cadastradas oficialmente.</p></div>
-        <div id="affiliatesGrid" class="affiliate-grid"></div>
-      </div>
-    </section>
-
-    <section id="midia" class="section container">
-      <div class="container">
-        <div class="section-head reveal"><p class="eyebrow">Galeria</p><h2>Imagens e vídeos</h2><p>Área para destacar registros de treinos, competições, bastidores e momentos da ABTT.</p></div>
-        <div id="mediaGrid" class="media-grid"></div>
-      </div>
-    </section>
-
-    <section id="contato" class="cta-section">
-      <div class="container cta-box reveal">
-        <div><p class="eyebrow">Entre para a equipe</p><h2>Fale com a ABTT agora.</h2><p>O botão abaixo abre conversa direta no WhatsApp oficial informado.</p></div>
-        <div class="contact-box"><a class="btn" href="https://wa.me/5551996396927" target="_blank" rel="noopener">Chamar no WhatsApp</a><a class="btn btn-ghost" href="#topo">Voltar ao topo</a></div>
-      </div>
-    </section>
-  </main>
-
-  <footer class="footer"><div class="container footer-grid"><img src="assets/abtt-logo-premium.jpg" alt="Logo ABTT" /><p>© <span id="year"></span> ABTT Equipe. Jiu-Jitsu • MMA • Luta-Livre.</p><a href="admin.html">Área do administrador</a></div></footer>
+  <script src="config.js"></script>
   <script src="script.js"></script>
-  <script>function googleTranslateElementInit(){new google.translate.TranslateElement({pageLanguage:'pt',layout:google.translate.TranslateElement.InlineLayout.SIMPLE},'google_translate_element');}</script>
-  <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>

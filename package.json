@@ -1,9 +1,9 @@
 {
-  "name": "abtt-site-netlify-database-functions",
-  "version": "1.0.0",
+  "name": "portal-dm-transparencia",
+  "version": "2.0.0",
   "private": true,
-  "description": "Site ABTT com Netlify Functions e Netlify Blobs para conteúdo compartilhado.",
+  "description": "Portal privado de prestação de contas por condomínio",
   "dependencies": {
-    "@netlify/blobs": "^10.0.0"
+    "@supabase/supabase-js": "^2.45.4"
   }
 }
